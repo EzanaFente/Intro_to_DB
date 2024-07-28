@@ -1,38 +1,37 @@
-import mysql.connector
-from mysql.connector import errorcode
+CREATE DATABASE IF NOT EXISTS alx_book_store
 
-def create_database(cursor):
-    try:
-        cursor.execute("CREATE DATABASE IF NOT EXISTS alx_book_store")
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_DB_CREATE_EXISTS:
-            print("Database 'alx_book_store' already exists.")
-        else:
-            print(f"Failed to create database: {err}")
-            exit(1)
-def main():
-    try:
-        # Connect to MySQL server (replace with your own connection details)
-        cnx = mysql.connector.connect(
-            host="localhost",
-            user="your_username",
-            password="your_password"
-        )
-        cursor = cnx.cursor()
+CREATE TABLE Books (
+    book_id PRIMARY KEY,
+    title VARCHAR(130),
+    author_id (Foreign Key referencing Authors table),
+    price DOUBLE,
+    publication_date DATE
+);
+CREATE TABLE Authors (
+    author_id PRIMARY KEY,
+    author_name VARCHAR(215),
+    author_id (Foreign Key referencing Authors table),
+    price DOUBLE,
+    publication_date DATE
+);
+CREATE TABLE Customers (
+    customer_id PRIMARY KEY,
+    customer_name VARCHAR(215),
+    email VARCHAR(215),
+    address TEXT,
+    publication_date DATE
+);
 
-        # Create the database
-        create_database(cursor)
+CREATE TABLE Orders (
+    order_id PRIMARY KEY,
+    customer_id INT(FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)),
+    email VARCHAR(215),
+    order_date DATE
+);
 
-        print("Database 'alx_book_store' created successfully!")
-
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-    finally:
-        # Close the connection
-        try:
-            if cursor:
-                cursor.close()
-            if cnx:
-                cnx.close()
-        except NameError:
-            pass            
+CREATE TABLE Order_Details (
+    orderdetailid PRIMARY KEY,
+    order_id INT (FOREIGN KEY (order_id) REFERENCES Orders(order_id)),
+    book_id INT(FOREIGN KEY (book_id) REFERENCES Books(book_id)),
+    quantity DOUBLE
+);
